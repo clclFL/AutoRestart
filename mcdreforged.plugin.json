@@ -1,0 +1,11 @@
+ {
+	"id": "auto_restart",
+	"version": "1.0.0",
+	"name": "AutoRestart",
+	"description": "Auto restart the server in the right time",
+	"author": "pineclone",
+	"link": "https://github.com/clclFL/AutoRestart",
+	"dependencies": {
+		"mcdreforged": ">=2.0.0-alpha.1"
+	}
+}
