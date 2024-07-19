@@ -1,9 +1,12 @@
 import os
 
-from mcdreforged.plugin.server_interface import PluginServerInterface
+from mcdreforged.minecraft.rtext.style import RColor
+from mcdreforged.minecraft.rtext.text import RTextBase
+from mcdreforged.plugin.si.plugin_server_interface import PluginServerInterface
 from ruamel.yaml import YAML
+
 ENABLE = False  # 插件状态
-DELAY = 3  # 重启间隔
+AVOID = []  # 退出码列表，当退出码为区间当中的值时不进行自动重启
 
 
 def init_config(server: PluginServerInterface, info):
@@ -11,31 +14,18 @@ def init_config(server: PluginServerInterface, info):
     if not os.path.exists(config_path):
         with open(config_path, 'w') as file_handler:
             file_handler.write('enable:  false\n')
-            file_handler.write('delay:  3\n')
+            file_handler.write('avoid_restart_on_exit_code:  \n')
+            file_handler.write('  - 0')
 
     with open(os.path.join(server.get_data_folder(), 'config.yml'), 'r') as file_handler:
         yaml = YAML()
         config = yaml.load(file_handler)
-        global ENABLE, DELAY
+        global ENABLE, AVOID
         ENABLE = config['enable']
-        DELAY = config['delay']
+        AVOID = config['avoid_restart_on_exit_code']
 
-    ensure_delay(server)
-    server.logger.info(get_status_str())
-
-
-def get_status_str() -> str:
-    global ENABLE, DELAY
-    return (f'AutoRestart status : \n'
-            + f'ENABLE: {ENABLE} \n'
-            + f'DELAY: {DELAY}')
-
-
-def ensure_delay(server: PluginServerInterface) -> None:
-    global DELAY
-    if DELAY is None or DELAY < 0:
-        DELAY = 3
-    server.logger.info(f'Bad Argument for DELAY: {DELAY}, use default value: 3')
+    text = RTextBase.from_any('Successfully load plugin configuration').set_color(RColor.gold)
+    server.logger.info(text.to_colored_text())
 
 
 def is_enable():
@@ -43,7 +33,17 @@ def is_enable():
     return ENABLE
 
 
-def get_delay():
-    global DELAY
-    return DELAY
+def get_exitcode_whitelist() -> str:
+    global AVOID
+    if AVOID is None:
+        return 'Any'
+    return ', '.join(str(code) for code in AVOID)
+
+
+def should_restart(code: int) -> bool:
+    global AVOID
+    if AVOID is None:
+        return True
+    return code not in AVOID
+
 

@@ -1,6 +1,6 @@
  {
 	"id": "auto_restart",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"name": "AutoRestart",
 	"description": "Auto restart the server in the right time",
 	"author": "pineclone",
