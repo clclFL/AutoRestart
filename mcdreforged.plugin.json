@@ -6,6 +6,6 @@
 	"author": "pineclone",
 	"link": "https://github.com/clclFL/AutoRestart",
 	"dependencies": {
-		"mcdreforged": ">=2.0.0-alpha.1"
+		"mcdreforged": ">=2.6.0"
 	}
 }
